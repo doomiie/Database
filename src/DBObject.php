@@ -448,7 +448,7 @@ class DBObject
         //printf("SQL: %s<br>\n", json_encode($sql));
         foreach ($row as $key => $value) {
             # code...
-            error_log(sprintf("TEST key: %s\n", json_encode($key)));
+            //error_log(sprintf("TEST key: %s\n", json_encode($key)));
             $class =  get_class($this);
             //$objectList[] = new $class((int)$value['id']);
             $objectList[] = new $class((Array)$value);
@@ -514,7 +514,7 @@ class DBObject
     {
         
         if ($this->$flagName != $flagValue) {
-            error_log(sprintf("SET FLAG in class %s, Object ID: %s, Flag: %s, Value: %s", get_class($this), $this->id, $flagName, $flagValue), $from);
+            error_log(sprintf("SET FLAG in class %s, Object ID: %s, Flag: %s, Value: %s", get_class($this), $this->id, $flagName, $flagValue));
             //(new DBLog())->log(sprintf("SET FLAG in class %s, Object ID: %s, Flag: %s, Value: %s", get_class($this), $this->id, $flagName, $flagValue), $from);
         }
         $this->$flagName = $flagValue;
@@ -553,7 +553,7 @@ class DBObject
     }
 
     // TODO 
-    public function getChildren()
+    public function getChildren($type = null)
     {
         foreach ($this->childrenClassArray as $key => $value) {
             # code...
@@ -563,6 +563,11 @@ class DBObject
             $objectList = (new $fullClass())->objectList();
             foreach ($objectList as $key1 => $value1) {
                 # code...
+                if(!is_null($type) and $value!= $type) 
+                { 
+                    //printf("KEY: %s <> %s\r\n<br>", $type, $value); 
+                    continue;
+                }
                 //$row = $this->checkMeIn($tableName);                
                 $row = $this->matchUs($value1, $this);
                 //error_log(sprintf("Child id: %s %d\r\n", $value1->id, json_encode($row)));
@@ -598,11 +603,6 @@ class DBObject
         $debugBacktrace = sprintf("%s\r\n",$e->getTraceAsString());
         error_log($debugBacktrace, 3, $fileName);
         //error_log($debugBacktrace);
-    }
-
-    public function user_log($message)
-    {
-           (new user_log($message, $this));
     }
   
 }

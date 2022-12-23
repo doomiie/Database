@@ -24,18 +24,25 @@ use Exception;
 
 class DBConfig
 {
+    public static $dbArray = null;
+
     public static function load($fileName)
     {
+        if(!file_exists($fileName))
+        {
+            throw new Exception("File does not exists: " . $fileName);
+            return null;
+        }
         $string = file_get_contents($fileName);
         if ($string === false) {
             return null;
         }
-
-        $decodeString = json_decode($string, true);
-        if ($decodeString === null) {
+        
+        self::$dbArray = json_decode($string, true);
+        if (self::$dbArray === null) {
             return null;
         }
+        return 1;
 
-        print_r($decodeString);
     }
 }

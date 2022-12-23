@@ -1,9 +1,9 @@
 <?php
 
 /**
- * DBHAndler for Database handling
+ * DBHAndler for USerManagement
  * 
- * @see       https://github.com/doomiie/
+ * @see       https://github.com/doomiie/gps/
 
  *
  *
@@ -35,13 +35,18 @@ class DBHandler
     {
         if(DBHandler::$dbHandle === false)
         {
-            DBHandler::$dbHandle = mysqli_connect("localhost", "phpmyadmin","sevenof9","tools4teams_towers");
+            if(null === DBConfig::load("/var/www/gps/database.json"))
+            {
+                throw new Exception("No such file as database.json!");
+                return null;
+            }
+            //error_log(json_encode(DBConfig::$dbArray['database']));
+            //DBHandler::$dbHandle = mysqli_connect(DBConfig::$dbArray['host'],DBConfig::$dbArray['user'],DBConfig::$dbArray['password'],DBConfig::$dbArray['database']);
+            DBHandler::$dbHandle = mysqli_connect(DBConfig::$dbArray['host'],DBConfig::$dbArray['username'],DBConfig::$dbArray['password'],DBConfig::$dbArray['database']);
             mysqli_set_charset(DBHandler::$dbHandle, "utf8mb4");                
         }
         $this->handle = DBHandler::$dbHandle;
-        return DBHandler::$dbHandle;
-
-        $this->handle = mysqli_connect("localhost", "phpmyadmin","sevenof9","tools4teams_towers");
+        return DBHandler::$dbHandle;        
 
         if ($this->handle === false) {
 			throw new Exception(mysqli_connect_error());
