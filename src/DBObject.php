@@ -49,7 +49,7 @@ class DBObject
      *
      * @var [type]
      */
-    protected $parentClass;
+    protected $parentClass = null;
     protected $childrenClassArray;
 
 
@@ -257,7 +257,7 @@ class DBObject
         error_log("Deleting myself from $this->tableName, id = $this->id");
         error_log("SQL : " . $sql);
         $row = $this->dbHandler->getRowSql($sql);
-        return count($row);
+        return $row === null ? null : count($row);
     }
     /**
      * Funkcja sprawdza, czy dwa obiekty mają bazę danych i są w niej połączone po ID
@@ -529,6 +529,7 @@ class DBObject
 
     public function getParent()
     {
+        if($this->parentClass === null) return null;
         /**
          * Jeśli parentClass = "project"
          * to parentTable = tower_project

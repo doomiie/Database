@@ -35,7 +35,7 @@ class DBHandler
     {
         if(DBHandler::$dbHandle === false)
         {
-            if(null === DBConfig::load("/var/www/gps/database.json"))
+            if(null === DBConfig::load("db.json"))
             {
                 throw new Exception("No such file as database.json!");
                 return null;
