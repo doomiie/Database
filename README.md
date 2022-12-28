@@ -1,4 +1,6 @@
 # database
+1.0.4
+Zmieniona lokalizacja db.json
 Nowa wersja, 1.0.1
 
 The way I tag versions is:
