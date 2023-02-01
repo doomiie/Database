@@ -43,6 +43,6 @@ class DBConfig
             return null;
         }
         return 1;
-        //echo json_encode(self::$dbArray);
+
     }
 }
