@@ -35,7 +35,7 @@ class DBHandler
     {
         if(DBHandler::$dbHandle === false)
         {
-            if(null === DBConfig::load("db.json"))
+            if(null === DBConfig::load(__DIR__."/db.json"))
             {
                 throw new Exception("No such file as database.json!");
                 return null;
@@ -116,7 +116,7 @@ class DBHandler
         //error_log(sprintf("result: [%s] for SQL [%s]<br>\n", $result,$sql));
         if($result)
         {
-        return mysqli_insert_id($this->handle);
+        return mysqli_affected_rows($this->handle);
         }
         else
         {
