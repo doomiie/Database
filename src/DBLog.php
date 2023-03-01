@@ -59,6 +59,8 @@ class DBLog extends DBObject2
         $log->_sql = $better;
         //$log->refId = $object->id;
 
+        // jeśli obiekt nie ma pola element id
+        $log->refId = $object->id;
         // jeśli obiekt ma pole element id, dodaj ten obiekt też
         if(property_exists($object, "elementId"))
         {

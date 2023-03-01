@@ -126,7 +126,7 @@ class DBObjectFunctions extends DBObjectFields
             return  sprintf("'%s'", $this->$field);
         }, array_keys($fields)));
         $sql = "INSERT INTO `$this->tableName` ($columns) VALUES ($placeholders);";
-        //error_log(get_class($this));
+        //error_log($sql);
         
         $result = $this->dbHandler->insertSql($sql);
         $this->id = $result;
@@ -197,8 +197,8 @@ class DBObjectFunctions extends DBObjectFields
         return $this->tableName;
     }
 
-    public function getLinkToSingleElement()
+    public function getLinkToSingleElement($title = null)
     {
-        return "<a href=\'#\'>Link</a>";
+        return sprintf("<a href='%s-single.php?index=%s' target='_blank'>%s</a>",$this->getTableName(), $this->id, is_null($title)?$this->name:$title);
     }
 }

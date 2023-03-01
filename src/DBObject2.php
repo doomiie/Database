@@ -31,6 +31,15 @@ class DBObject2 extends DBObjectFunctions
     const CUT_TYPE_ZERO = 1;
     const CUT_TYPE_MOVE = 2;
     const CUT_TYPE_DESTROY = 3;
+
+    // spoiny
+    const JOINT_TYP_LINIA= 11;
+    const JOINT_TYP_MONTAZ = 12;
+    const JOINT_TYP_HDD = 13;
+    const JOINT_TYP_DP = 14;
+    const JOINT_TYP_OSLONA = 15;
+
+
     // kody QR
     const QR_ALREADY_CONNECTED = -1;
     const QR_POSITION_TAKEN = -2;
@@ -40,9 +49,14 @@ class DBObject2 extends DBObjectFunctions
     const QR_NOT_IN_ELEMENT = -6;   // qr code nie należy do tego elemenu
     const QR_CIRCULLAR_CONNECTION = -7; // próbujemy podpiąć spoinę do dwóch końców elementu
     const QR_ALREADY_DISCONNECTED = -8; // próbujemy odpiąć kod, ale on nie jest podpięty
+    const QR_NOT_ACTIVE = -9; // próbujemy odpiąć kod, ale on nie jest podpięty
     // obiekty
     const OBJECT_NOT_FOUND = -128;
     const OBJECT_LENGTH_TOO_SMALL = -129;   // tniemy rurę, ale za mała długość
+    const OBJECT_LENGTH_SMALLER_THAN_DIAMETER = -130;   // tniemy rurę, długość < średnicy
+    const OBJECT_WRONG_TYPE = -131;   // zły typ obiektu do tej operacji
+    const OBJECT_WITH_ERRORS = -132;   // obiekt jest niekompletny np
+ 
 
     /**
      * [Description for getErrorDescription]
@@ -58,9 +72,9 @@ class DBObject2 extends DBObjectFunctions
     //NOTE - Reflection class usage
     public static function getErrorDescription($value)
     {
+        if ($value > 0) return $value;
         $map = array_flip((new \ReflectionClass('Database\DBObject2'))->getConstants());
         return (array_key_exists($value, $map) ? $map[$value] : $value);
-
     }
 
 
@@ -69,10 +83,10 @@ class DBObject2 extends DBObjectFunctions
         printf("<hr> PRINT for object: %s<br>\n", get_class($this));
         foreach ((array)$this as $key => $val) {
             if (is_object($val)) continue;
-            if(is_array($val)) {printf("FIELD: %s, VALUE: [%s]<br>\n",  $key, json_encode($val)); }
-            else
-            printf("FIELD: %s, VALUE: [%s]<br>\n",  $key, $val);
-
+            if (is_array($val)) {
+                printf("FIELD: %s, VALUE: [%s]<br>\n",  $key, json_encode($val));
+            } else
+                printf("FIELD: %s, VALUE: [%s]<br>\n",  $key, $val);
         }
         echo "<br>\n";
         return;
@@ -83,34 +97,60 @@ class DBObject2 extends DBObjectFunctions
 
     public function printDIV()
     {
-        return sprintf("<div class='text-break text-cyan'>
+        return sprintf(
+            "<div class='text-break text-cyan'>
         <div>Klasa: <span class='text-white'>%s</span></div>
         <div>Nazwa: <span class='text-white'>%s</span></div>
         <div>ID: <span class='text-white'>%s</span></div>
         <div>Czas stworzenia: <span class='text-white'>%s</span></div>
+        <div>Aktywne w DB!: <span class='%s'>%s</span></div>
         </div>
-        ", 
-        get_class($this),
-        $this->name,
-        $this->id,
-        $this->time_added
+        ",
+            get_class($this),
+            $this->name,
+            $this->id,
+            $this->time_added,
+            $this->active ? "text-white" : "text-white text-sm-center text-decoration-line-through",
+            $this->active ? "TAK" : "NIEAKTYWNE!"
         );
     }
 
     public function returnHistoryArray()
     {
-        if($this->id == -1) return null;
+        if ($this->id == -1) return null;
         $map = (new \ReflectionClass(get_class($this)))->getProperties(ReflectionProperty::IS_PUBLIC);
         //$map = (new \ReflectionClass('Database\DBObject2'))->getProperties(ReflectionProperty::IS_PUBLIC);
-        
+
         foreach ($map as $key => $value) {
             $name = $value->getName();
             $returnArray[$name] = $this->$name;
-
         }
         $returnArray["class"] = get_class($this);
         $returnArray["message"] = "";
         return $returnArray;
+    }
 
+    public function returnTableArray()
+    {
+        if ($this->id == -1) return null;
+        $map = (new \ReflectionClass(get_class($this)))->getProperties(ReflectionProperty::IS_PUBLIC);
+        //$map = (new \ReflectionClass('Database\DBObject2'))->getProperties(ReflectionProperty::IS_PUBLIC);
+
+        foreach ($map as $key => $value) {
+            $name = $value->getName();
+            $returnArray[$name] = $this->$name;
+        }
+        return $returnArray;
+    }
+
+    public function getObjectList(string $sql)
+    {
+        $result = $this->dbHandler->getRowSql($sql);
+        $className = get_class($this);
+        foreach ($result as $key => $value) {
+            # code...
+            $resultArrayOfObjects[] = new $className($value['id']);            
+        }
+        return isset($resultArrayOfObjects)? $resultArrayOfObjects: null;
     }
 }
