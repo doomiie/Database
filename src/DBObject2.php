@@ -38,6 +38,7 @@ class DBObject2 extends DBObjectFunctions
     const JOINT_TYP_HDD = 13;
     const JOINT_TYP_DP = 14;
     const JOINT_TYP_OSLONA = 15;
+    const JOINT_TYP_NAPRAWA = 16;
 
 
     // kody QR
