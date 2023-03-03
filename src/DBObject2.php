@@ -39,6 +39,9 @@ class DBObject2 extends DBObjectFunctions
     const JOINT_TYP_DP = 14;
     const JOINT_TYP_OSLONA = 15;
     const JOINT_TYP_NAPRAWA = 16;
+    const JOINT_TYP_CUT_BADANIA = 17;
+    const JOINT_TYP_CUT_NIEZGODNOSC = 18;
+    const JOINT_TYP_CUT_TECHNOLOGICZNE = 19;
 
 
     // kody QR
@@ -153,5 +156,13 @@ class DBObject2 extends DBObjectFunctions
             $resultArrayOfObjects[] = new $className($value['id']);            
         }
         return isset($resultArrayOfObjects)? $resultArrayOfObjects: null;
+    }
+
+    public function getObjectButton($color = "text-white", $title = null)
+    {
+        $path = explode('\\', get_class($this));
+        $className =  array_pop($path);
+        if(null==$title) $title = sprintf("[%s] ", $this->id, $this->name);
+        return sprintf('<button class="btn %s bg-primary m-2 d-block" onclick="findElementById(\'qrcodeslibrary+%s\',%s, elementSingleV1callbackFunction )">%s</button>', $color, $className, $this->id, $title);
     }
 }
