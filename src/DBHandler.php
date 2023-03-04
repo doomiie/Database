@@ -33,14 +33,14 @@ class DBHandler
 
     public function init()
     {
+        //error_log("No such file as database.json! in " . __DIR__);
         if(DBHandler::$dbHandle === false)
         {
-            if(null === DBConfig::load("/var/www/gps/database.json"))
+            if(null === DBConfig::load(__DIR__."/db.json"))
             {
                 throw new Exception("No such file as database.json!");
                 return null;
             }
-            //error_log(json_encode(DBConfig::$dbArray['database']));
             //DBHandler::$dbHandle = mysqli_connect(DBConfig::$dbArray['host'],DBConfig::$dbArray['user'],DBConfig::$dbArray['password'],DBConfig::$dbArray['database']);
             DBHandler::$dbHandle = mysqli_connect(DBConfig::$dbArray['host'],DBConfig::$dbArray['username'],DBConfig::$dbArray['password'],DBConfig::$dbArray['database']);
             mysqli_set_charset(DBHandler::$dbHandle, "utf8mb4");                
@@ -116,7 +116,7 @@ class DBHandler
         //error_log(sprintf("result: [%s] for SQL [%s]<br>\n", $result,$sql));
         if($result)
         {
-        return mysqli_insert_id($this->handle);
+        return mysqli_affected_rows($this->handle);
         }
         else
         {
