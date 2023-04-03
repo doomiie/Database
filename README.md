@@ -1,4 +1,6 @@
 # database
+Wersja 1.0.7
+
 Nowa wersja, 1.0.1
 
 The way I tag versions is:
